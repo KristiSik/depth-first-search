@@ -92,7 +92,7 @@ cy.on("click", function(event) {
 });
 
 cy.on("cxttap", function(event) {
-    if (event.target[0]) {
+    if (event.target[0] && !selectRootNodeMode) {
         event.target.remove();
     }
 });
