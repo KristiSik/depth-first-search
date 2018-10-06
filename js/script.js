@@ -8,7 +8,7 @@ var cy = cytoscape({
         selector: 'node',
         style: {
             'background-color': '#666',
-            'label': 'data(id)',
+            'label': 'data(id)'
         },
         },
         {
@@ -34,11 +34,17 @@ var cy = cytoscape({
         }
         },
         {
-        selector: '.selected-edge-blue',
+        selector: '.selected-edge-red',
         style: {
             'width': 4,
-            'line-color': 'blue'
+            'line-color': '#f44242'
         }
+        },
+        {
+        selector: '.root-node',
+        style: {
+            'background-color': 'orange'
+        },
         }
     ],
     layout: {
@@ -49,8 +55,11 @@ var cy = cytoscape({
 
 var selectedToConnect = cy.collection();
 
-cy.on("click", function(event){
+cy.on("click", function(event) {
     if (!event.target[0]) {
+        if (selectRootNodeMode) {
+            return;
+        }
         if (selectedToConnect.length == 0) {
             addNode(event.position);
         } else {
@@ -59,13 +68,15 @@ cy.on("click", function(event){
         }
     } else if (event.target[0]) {
         if (selectRootNodeMode) {
-            selectRootNode(event.target[0]);
+            if (event.target[0].group() == "nodes") {
+                selectRootNode(event.target[0]);
+            }
             return;
         }
         addNodeToSelected(event.target[0]);
         if (selectedToConnect.length == 2) {
             if (!nodesAreConnected()) {
-                addEdge();
+                addEdgeToPlot();
             }
             selectedToConnect[0].removeClass("selected-node");
             selectedToConnect = cy.collection();
@@ -75,7 +86,7 @@ cy.on("click", function(event){
     }
 });
 
-cy.on("cxttap", function(event){
+cy.on("cxttap", function(event) {
     if (event.target[0]) {
         event.target.remove();
     }
@@ -88,12 +99,16 @@ function nodesAreConnected() {
     return false;
 }
 
-function t() {
+function displayDFS() {
     var i = 0;
-    setTimeout(function tick(){
-        if (i < cy.edges().length) {
-            cy.edges()[i].addClass("selected-edge-blue");
+    setTimeout(function tick() {
+        if (i < depthFirstEdges.length) {
+            cy.edges()
+            .filter(edge => (edge.source().id() == depthFirstEdges[i].startNode.name && edge.target().id() == depthFirstEdges[i].endNode.name) || (edge.source().id() == depthFirstEdges[i].endNode.name && edge.target().id() == depthFirstEdges[i].startNode.name))[0]
+            .addClass("selected-edge-red");
             setTimeout(tick, 1000);
+        } else {
+            $(".select-first-node-btn").removeAttr("disabled");
         }
         i++;
     }, 1000);
@@ -111,24 +126,40 @@ function addNodeToSelected(node) {
     selectedToConnect = selectedToConnect.add(node);
 }
 
-function addEdge() {
+function addEdgeToPlot() {
     cy.add({
         group: "edges",
         data: { source: selectedToConnect[0].id(), target: selectedToConnect[1].id() }
     });
 }
 
-$(document).on("click", ".select-first-node-btn", function(){
+function uncolorAllEdges() {
+    cy.edges().removeClass("selected-edge-red");
+}
+
+$(document).on("click", ".select-first-node-btn", function() {
+    if (cy.edges().length == 0) {
+        alert("There is no edges.");
+        return;
+    }
+    uncolorAllEdges();
+    if (rootNode != null) {
+        rootNode.removeClass("root-node");
+    }
     selectRootNodeMode = true;
     $(this).attr("disabled", "true");
 });
 
 function selectRootNode(node) {
+    node.addClass("root-node");
     rootNode = node;
     selectRootNodeMode = false;
-    $(".select-first-node-btn").removeClass("select-first-node-btn").addClass("start-dfs-btn").html("Start DFS").removeAttr("disabled");
+    var data = [];
+    $(this).attr("disabled", "true");
+    cy.edges().forEach(edge => {
+        data.push([edge.source().id(), edge.target().id()]);
+    });
+    fillData(data);
+    executeDFS(rootNode.id());
+    displayDFS();
 }
-
-$(document).on("click", ".start-dfs-btn", function(){
-    alert("ok");
-});
