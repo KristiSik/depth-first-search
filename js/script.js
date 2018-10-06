@@ -3,6 +3,9 @@ var selectRootNodeMode = false;
 var rootNode;
 var cy = cytoscape({
     container: document.getElementById('cy'),
+    zoom: 1.5,
+    minZoom: 0.5,
+    maxZoom: 10,
     style: [
         {
         selector: 'node',
