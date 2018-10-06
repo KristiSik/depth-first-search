@@ -2,15 +2,29 @@
 <head>
 	<title>Depth First Search</title>
 	<link href="css/style.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.0/dist/semantic.min.css">
 </head>
 <body>
 	<div id="cy"></div>
 	<div class="toolbox">
-		<button class="select-first-node-btn">Select root node</button>
+		<button class="select-first-node-btn ui red button">Select root node</button>
+		<button class="ui grey button clear-all-btn"><i class="eraser icon"></i>Clear</button>
+	</div>
+	<div class="ui mini modal">
+		<div class="header">
+			Error
+		</div>
+		<div class="content">
+			<p>Please, create edges between nodes</p>
+		</div>
+		<div class="actions">
+			<div class="ui positive right labeled icon button">OK<i class="checkmark icon"></i></div>
+		</div>
 	</div>
 	<script src="js/depthFirstSearch.js" text/javascript"></script>
 	<script src="js/cytoscape.min.js" type="text/javascript"></script>
 	<script src="js/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.0/dist/semantic.min.js"></script>
 	<script src="js/script.js" type="text/javascript"></script>
 </body>
 </html>

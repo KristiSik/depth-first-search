@@ -8,23 +8,6 @@ body {
     display: block;
 }
 
-button {
-    border-radius: 15px;
-    cursor: pointer;
-    background-color: red;
-    font-size: 20px;
-    color: white;
-    border: none;
-    font-family: "Segoe UI";
-    outline: none;
-    padding: 10px;
-}
-
-button:disabled {
-    cursor: default;
-    background-color: orangered;
-}
-
 .toolbox {
     position: absolute;
     bottom: 20px;

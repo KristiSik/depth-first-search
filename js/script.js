@@ -40,7 +40,9 @@ var cy = cytoscape({
         selector: '.selected-edge-red',
         style: {
             'width': 4,
-            'line-color': '#f44242'
+            'line-color': '#f44242',
+            'transition-property': 'line-color',
+            'transition-duration': '0.5s'
         }
         },
         {
@@ -111,7 +113,8 @@ function displayDFS() {
             .addClass("selected-edge-red");
             setTimeout(tick, 1000);
         } else {
-            $(".select-first-node-btn").removeAttr("disabled");
+            enableButtons();
+            selectRootNodeMode = false;
         }
         i++;
     }, 1000);
@@ -142,7 +145,7 @@ function uncolorAllEdges() {
 
 $(document).on("click", ".select-first-node-btn", function() {
     if (cy.edges().length == 0) {
-        alert("There is no edges.");
+        $('.mini.modal').modal('show');
         return;
     }
     uncolorAllEdges();
@@ -150,13 +153,15 @@ $(document).on("click", ".select-first-node-btn", function() {
         rootNode.removeClass("root-node");
     }
     selectRootNodeMode = true;
-    $(this).attr("disabled", "true");
+    disableButtons();
 });
 
 function selectRootNode(node) {
+    if (node.incomers().length + node.outgoers().length == 0) {
+        return;
+    }
     node.addClass("root-node");
     rootNode = node;
-    selectRootNodeMode = false;
     var data = [];
     $(this).attr("disabled", "true");
     cy.edges().forEach(edge => {
@@ -165,4 +170,23 @@ function selectRootNode(node) {
     fillData(data);
     executeDFS(rootNode.id());
     displayDFS();
+}
+
+$(".settings-btn").on("click", function() {
+    $(".ui.sidebar").sidebar("show");
+});
+
+$(".clear-all-btn").on("click", function() {
+    cy.elements().remove();
+    gId = 1;
+});
+
+function disableButtons() {
+    $(".select-first-node-btn").attr("disabled", "true");
+    $(".clear-all-btn").attr("disabled", "true");
+}
+
+function enableButtons() {
+    $(".select-first-node-btn").removeAttr("disabled");
+    $(".clear-all-btn").removeAttr("disabled");
 }
