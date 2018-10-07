@@ -61,7 +61,7 @@ var cy = cytoscape({
 
 var selectedToConnect = cy.collection();
 
-cy.on("click", function(event) {
+cy.on("tap", function(event) {
     if (DFSDisplayMode) {
         return;
     }
