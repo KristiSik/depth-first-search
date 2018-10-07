@@ -8,6 +8,7 @@ var cy = cytoscape({
     zoom: 1.5,
     minZoom: 0.5,
     maxZoom: 10,
+    wheelSensitivity: 0.1,
     style: [
         {
         selector: 'node',
@@ -221,7 +222,7 @@ $(".import-btn").change(function(){
         cy.json(JSON.parse(event.target.result));
         uncolorElements();
         gId = parseInt(cy.nodes().reduce(function(prev, current) {
-            return (prev && (prev.id() > current.id())) ? prev : current;
+            return (prev && (parseInt(prev.id()) > parseInt(current.id()))) ? prev : current;
         }).id()) + 1;
     };
     reader.readAsBinaryString(document.getElementById("uploadFile").files[0]);

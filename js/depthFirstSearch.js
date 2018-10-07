@@ -55,7 +55,7 @@ function depthFirstSearch(head) {
 			depthFirstSearch(edge.endNode);
 		}
 	}
-  }
+}
 
 function addEdgeToArray(edgeNumber, startNodeName, endNodeName) {
 	var edge = new Edge(edgeNumber);
