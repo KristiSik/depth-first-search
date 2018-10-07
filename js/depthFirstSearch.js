@@ -38,21 +38,24 @@ function executeDFS(rootNodeName) {
 //finish when all nodes are visited
 function depthFirstSearch(head) {
 	for(var edge of head.edges) {
-		if(edge.isTaken == true)
+		if (edge.isTaken == true)
 			continue;
-		if(edge.endNode.visited==true && edge.startNode.visited==true)
+		if (edge.endNode.visited == true && edge.startNode.visited == true)
 			continue;
-		else{
+		else {
 			edge.isTaken = true;
+			if (edge.startNode !== head) {
+				var temp = edge.startNode;
+				edge.startNode = edge.endNode;
+				edge.endNode = temp;
+			}
 			edge.endNode.visited = true;
 			edge.startNode.visited = true;
 			depthFirstEdges.push(edge);
-			// console.log(edge.number+": "+edge.startNode.name+"-"+edge.endNode.name);
 			depthFirstSearch(edge.endNode);
-			depthFirstSearch(edge.startNode);
 		}
 	}
-}
+  }
 
 function addEdgeToArray(edgeNumber, startNodeName, endNodeName) {
 	var edge = new Edge(edgeNumber);
