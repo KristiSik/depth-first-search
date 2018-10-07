@@ -1,6 +1,7 @@
 var gId = 1;
 var selectRootNodeMode = false;
 var firstClickAfterDFS = false;
+var DFSDisplayMode = false;
 var rootNode;
 var cy = cytoscape({
     container: document.getElementById('cy'),
@@ -61,6 +62,9 @@ var cy = cytoscape({
 var selectedToConnect = cy.collection();
 
 cy.on("click", function(event) {
+    if (DFSDisplayMode) {
+        return;
+    }
     if (firstClickAfterDFS) {
         firstClickAfterDFS = false;
         uncolorElements();
@@ -126,6 +130,7 @@ function displayDFS() {
             }
             setTimeout(tick, 1000);
         } else {
+            DFSDisplayMode = false;
             enableButtons();
             selectRootNodeMode = false;
         }
@@ -179,6 +184,7 @@ function selectRootNode(node) {
         data.push([edge.source().id(), edge.target().id()]);
     });
     firstClickAfterDFS = true;
+    DFSDisplayMode = true;
     fillData(data);
     executeDFS(rootNode.id());
     displayDFS();
