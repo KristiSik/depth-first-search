@@ -9,6 +9,14 @@
 	<div class="toolbox">
 		<button class="select-first-node-btn ui red button"><i class="hand point up icon"></i>Select root node</button>
 		<button class="ui grey button clear-all-btn"><i class="eraser icon"></i>Clear</button>
+		<button class="ui top left pointing dropdown button">
+			<i class="file icon"></i>File
+			<div class="menu">
+				<label for="uploadFile" class="item">Import graph...</label>
+				<div class="item export-btn">Export graph...</div>
+			</div>
+		</button>
+		<input type="file" accept=".json" id="uploadFile" class="import-btn" style="display:none;">
 	</div>
 	<div class="ui mini modal">
 		<div class="header">
