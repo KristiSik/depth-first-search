@@ -1,5 +1,6 @@
 var gId = 1;
 var selectRootNodeMode = false;
+var firstClickAfterDFS = false;
 var rootNode;
 var cy = cytoscape({
     container: document.getElementById('cy'),
@@ -60,6 +61,10 @@ var cy = cytoscape({
 var selectedToConnect = cy.collection();
 
 cy.on("click", function(event) {
+    if (firstClickAfterDFS) {
+        firstClickAfterDFS = false;
+        uncolorElements();
+    }
     if (!event.target[0]) {
         if (selectRootNodeMode) {
             return;
@@ -147,8 +152,9 @@ function addEdgeToPlot() {
     });
 }
 
-function uncolorAllEdges() {
+function uncolorElements() {
     cy.edges().removeClass("selected-edge-red");
+    cy.nodes().removeClass("visited-node").removeClass("root-node");
 }
 
 $(document).on("click", ".select-first-node-btn", function() {
@@ -156,11 +162,7 @@ $(document).on("click", ".select-first-node-btn", function() {
         $('.mini.modal').modal('show');
         return;
     }
-    uncolorAllEdges();
-    if (rootNode != null) {
-        rootNode.removeClass("root-node");
-        cy.nodes().removeClass("visited-node");
-    }
+    uncolorElements();
     selectRootNodeMode = true;
     disableButtons();
 });
@@ -176,6 +178,7 @@ function selectRootNode(node) {
     cy.edges().forEach(edge => {
         data.push([edge.source().id(), edge.target().id()]);
     });
+    firstClickAfterDFS = true;
     fillData(data);
     executeDFS(rootNode.id());
     displayDFS();
@@ -192,11 +195,13 @@ $(".clear-all-btn").on("click", function() {
 function disableButtons() {
     $(".select-first-node-btn").attr("disabled", "true");
     $(".clear-all-btn").attr("disabled", "true");
+    $(".file-btn").attr("disabled", "true");
 }
 
 function enableButtons() {
     $(".select-first-node-btn").removeAttr("disabled");
     $(".clear-all-btn").removeAttr("disabled");
+    $(".file-btn").removeAttr("disabled");
 }
 
 function clearAll() {
@@ -208,6 +213,10 @@ $(".import-btn").change(function(){
     var reader = new FileReader();
     reader.onload = function(event) {
         cy.json(JSON.parse(event.target.result));
+        uncolorElements();
+        gId = parseInt(cy.nodes().reduce(function(prev, current) {
+            return (prev && (prev.id() > current.id())) ? prev : current;
+        }).id()) + 1;
     };
     reader.readAsBinaryString(document.getElementById("uploadFile").files[0]);
 });
